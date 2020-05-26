@@ -85,8 +85,6 @@ def getBox(frame,output_result,prob_threshold, width, height):
         if box[2] > prob_threshold:
             start_point = (int(box[3] * width), int(box[4] * height))
             end_point = (int(box[5] * width), int(box[6] * height))
-            # Using cv2.rectangle() method 
-            # Draw a rectangle with Green line borders of thickness of 1 px
             frame = cv2.rectangle(frame, start_point, end_point, color,thickness)
             counter+=1
     return frame, counter
@@ -135,6 +133,7 @@ def infer_on_stream(args, client):
     # initlise some variable 
     report,counter,counter_prev,duration_prev = 0,0,0,0
     counter_total,dur,request_id = 0,0,0
+    # times = []
 
     while cap.isOpened():
         flag, frame = cap.read()
@@ -146,17 +145,19 @@ def infer_on_stream(args, client):
         image = image.reshape(1, *image.shape)
 
         duration_report = None
-        inf_start = time.time()
+        #inf_start = time.time()
         infer_network.exec_net(image)
 
         if infer_network.wait() == 0:
-            det_time = time.time() - inf_start
+            # curr_time = time.time() - inf_start
             # Results of the output layer of the network
             output_results = infer_network.get_output()
             #Extract any desired stats from the results 
             #Update the frame to include detected bounding boxes
             boxxed, pointer = getBox(frame, output_results, prob_threshold, width, height)
-            # print("inf time", det_time)
+
+            # print("curr inference time", curr_time)
+            # times.append(curr_time)
 
             #Calculate and send relevant information on 
             # current_count, total_count and duration to the MQTT server
@@ -208,7 +209,7 @@ def infer_on_stream(args, client):
 
     cap.release()
     cv2.destroyAllWindows()
-
+    # print("Average time :", sum(times)/len(times))
 def main():
     """
     Load the network and parse the output.
