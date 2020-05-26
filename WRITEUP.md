@@ -50,7 +50,24 @@ Models were compared before and after converstion to intermediate representation
     b. After conversion  : 60 ms
 
 (Script to calculate this is commented in the code)
+Inference time was calculated based on [this article](https://deci.ai/the-correct-way-to-measure-inference-time-of-deep-neural-networks/)
+
+Basically:
+```py
+times = []
+while True:
+ start = time.time()
+ output = call_model(input)
+ infer_time = time.time() - start
+ times.append(infer_time)
+ if wanna_break:
+  break
+avgerage_infer_time = sum(times)/len(times)
+
+```
+
 For more details please head on to Model Research section.
+
 ### Cloud Vs Edge Deployment :
 
 Not diving deep into this but edge models need only local network connection. 
