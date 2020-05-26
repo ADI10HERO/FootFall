@@ -40,15 +40,16 @@ Models were compared before and after converstion to intermediate representation
 
 ### The inference time of the models (approx.):
 1. ssd_inception_v2_coco :
-    a. Before conversion : 150 ms
+    a. Before conversion : 150 ms    
     b. After conversion  : 155 ms
 2. faster_rcnn_inception_v2_coco :
     a. Before conversion : 90 ms
-    b. After conversion  : 20 ms
+    b. After conversion  : 30 ms
 3. ssd_mobilenet_v2_coco :
     a. Before conversion : 50 ms
     b. After conversion  : 60 ms
 
+(Script to calculate this is commented in the code)
 For more details please head on to Model Research section.
 ### Cloud Vs Edge Deployment :
 
@@ -111,12 +112,12 @@ Steps I took for model conversions :
   - http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz
   - I converted the model to an Intermediate Representation with the following arguments:
     ```sh
-   python /opt/intel/openvino/deployment_tools/model_optimizer/mo.py \
-   --input_model frozen_inference_graph.pb \
-   --tensorflow_object_detection_api_pipeline_config pipeline.config \
-   --reverse_input_channels \
-   --tensorflow_use_custom_operations_config \
-   /opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/faster_rcnn_support.json 
+    python /opt/intel/openvino/deployment_tools/model_optimizer/mo.py \
+    --input_model frozen_inference_graph.pb \
+    --tensorflow_object_detection_api_pipeline_config pipeline.config \
+    --reverse_input_channels \
+    --tensorflow_use_custom_operations_config \
+    /opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/faster_rcnn_support.json 
     ```
   - This model performed satisfactorily
   - Threshold value was experimented with and best value was found at 0.4* (* = range(0,5))
@@ -126,12 +127,12 @@ Steps I took for model conversions :
   - http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz
   - I converted the model to an Intermediate Representation with the following arguments:
     ```sh
-   python /opt/intel/openvino/deployment_tools/model_optimizer/mo.py \
-   --input_model frozen_inference_graph.pb \
-   --tensorflow_object_detection_api_pipeline_config pipeline.config \
-   --reverse_input_channels \
-   --tensorflow_use_custom_operations_config \
-   /opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/ssd_v2_support.json 
+    python /opt/intel/openvino/deployment_tools/model_optimizer/mo.py \
+    --input_model frozen_inference_graph.pb \
+    --tensorflow_object_detection_api_pipeline_config pipeline.config \
+    --reverse_input_channels \
+    --tensorflow_use_custom_operations_config \
+    /opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/ssd_v2_support.json 
     ```
   - This model too did not perfrom well with the accuracy metric.
   - I tried to improve the model for the app by using some transfer learning techniques.
@@ -153,8 +154,4 @@ python main.py \
 -l /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libcpu_extension_sse4.so \
 -d CPU -pt 0.6 | ffmpeg -v warning -f rawvideo -pixel_format bgr24 -video_size 768x432 \
 -framerate 24 -i - http://0.0.0.0:3004/fac.ffm
-```
-
-```
-python main.py -i resources/Pedestrian_Detect_2_1_1.mp4 -m intel/person-detection-retail-0013/FP16/person-detection-retail-0013.xml -l /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libcpu_extension_sse4.so -d CPU -pt 0.6 | ffmpeg -v warning -f rawvideo -pixel_format bgr24 -video_size 768x432 -framerate 24 -i - http://0.0.0.0:3004/fac.ffm
 ```
