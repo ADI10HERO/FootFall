@@ -41,6 +41,7 @@ MQTT_HOST = IPADDRESS
 MQTT_PORT = 3001
 MQTT_KEEPALIVE_INTERVAL = 60
 
+
 def build_argparser():
     """
     Parse command line arguments.
@@ -68,12 +69,12 @@ def build_argparser():
     return parser
 
 
-def connect_mqtt():
-    # Connect to the MQTT client
-    client = mqtt.Client()
-    client.connect(MQTT_HOST, MQTT_PORT, MQTT_KEEPALIVE_INTERVAL)
+# def connect_mqtt():
+#     # Connect to the MQTT client
+#     client = mqtt.Client()
+#     client.connect(MQTT_HOST, MQTT_PORT, MQTT_KEEPALIVE_INTERVAL)
 
-    return client
+#     return client
  
 def getBox(frame,output_result,prob_threshold, width, height):
     counter=0
@@ -89,7 +90,7 @@ def getBox(frame,output_result,prob_threshold, width, height):
             counter+=1
     return frame, counter
     
-def infer_on_stream(args, client):
+def infer_on_stream(args):
     """
     Initialize the inference network, stream video to network,
     and output stats and video.
@@ -123,13 +124,18 @@ def infer_on_stream(args, client):
         if not os.path.isfile(inp):
             raise Exception("File doesn't exist")
 
+
     cap = cv2.VideoCapture(inp)
     cap.open(inp)
 
     # Grab the shape of the input 
     width = int(cap.get(3))
     height = int(cap.get(4))
-    
+
+    fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+    out = cv2.VideoWriter('output.avi', fourcc, 20.0, (width, height))
+
+
     # initlise some variable 
     report,counter,counter_prev,duration_prev = 0,0,0,0
     counter_total,dur,request_id = 0,0,0
@@ -182,32 +188,36 @@ def infer_on_stream(args, client):
                     elif dur == 3 and counter < counter_prev:
                         duration_report = int((duration_prev / 10.0) * 1000)
 
-            client.publish('person',
-                           payload=json.dumps({
-                               'count': report, 
-                               'total': counter_total
-                               }),
-                           qos=0, 
-                           retain=False
-                           )
+            print('person\n', 'count:', report,'\ttotal:', counter_total )
+            # client.publish('person',
+            #                payload=json.dumps({
+            #                    'count': report, 
+            #                    'total': counter_total
+            #                    }),
+            #                qos=0, 
+            #                retain=False
+            #                )
 
             if duration_report is not None:
-                client.publish('person/duration',
-                               payload=json.dumps({
-                                   'duration': duration_report
-                                   }),
-                               qos=0, 
-                               retain=False
-                               )
+                print('person duration:', duration_report)
+            #     client.publish('person/duration',
+            #                    payload=json.dumps({
+            #                        'duration': duration_report
+            #                        }),
+            #                    qos=0, 
+            #                    retain=False
+            #                    )
 
             # Send frame to the ffmpeg server
-            sys.stdout.buffer.write(boxxed)
-            sys.stdout.flush()
-            
+            # sys.stdout.buffer.write(boxxed)
+            # sys.stdout.flush()
+            out.write(boxxed)
+
             if single_image_mode:
                 cv2.imwrite('output.jpg', boxxed)
 
     cap.release()
+    out.release()
     cv2.destroyAllWindows()
     # print("Average time :", sum(times)/len(times))
 def main():
@@ -219,9 +229,10 @@ def main():
     # Grab command line args
     args = build_argparser().parse_args()
     # Connect to the MQTT server
-    client = connect_mqtt()
+    # client = connect_mqtt()
     # Perform inference on the input stream
-    infer_on_stream(args, client)
+    
+    infer_on_stream(args)
 
 
 if __name__ == '__main__':
