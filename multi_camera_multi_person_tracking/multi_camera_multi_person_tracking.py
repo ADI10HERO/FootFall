@@ -29,6 +29,7 @@ from utils.visualization import visualize_multicam_detections
 
 log.basicConfig(stream=sys.stdout, level=log.DEBUG)
 
+ids_tracked = set()
 
 class FramesThreadBody:
     def __init__(self, capture, max_queue_length=2):
@@ -63,7 +64,7 @@ def run(params, capture, detector, reid):
 
     if len(params.output_video):
         video_output_size = (1920 // capture.get_num_sources(), 1080)
-        fourcc = cv.VideoWriter_fourcc(*'XVID')
+        fourcc = cv.VideoWriter_fourcc(*'MJPG')
         output_video = cv.VideoWriter(params.output_video,
                                       fourcc, 24.0,
                                       video_output_size)
@@ -89,8 +90,14 @@ def run(params, capture, detector, reid):
         tracker.process(frames, all_detections, all_masks)
         tracked_objects = tracker.get_tracked_objects()
 
-        fps = round(1 / (time.time() - start), 1)
-        vis = visualize_multicam_detections(frames, tracked_objects, fps)
+        current_count = 0
+        for cam in tracked_objects:
+            current_count += len(cam)
+            for person in cam:
+                ids_tracked.add(person.label)
+        print('count', current_count, len(ids_tracked))
+        # fps = round(1 / (time.time() - start), 1)
+        vis = visualize_multicam_detections(frames, tracked_objects, (current_count, len(ids_tracked)))
         cv.imshow(win_name, vis)
         if output_video:
             output_video.write(cv.resize(vis, video_output_size))
