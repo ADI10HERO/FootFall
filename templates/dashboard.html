@@ -1,0 +1,17 @@
+<html>
+
+<head>
+    <title>FootFall</title>
+</head>
+
+<body>
+    <h1>Dashboard</h1>
+    <h3> Total Count: {{total_count}} </h3>
+    {% for i in range(num_cam) %}
+        <h3> Camera {{i + 1}}: {{cam_counts[i]}} </h3>
+        <!-- img src="{{ url_for('video_feed') }}" alt="cam_{{i + 1}}" -->
+        <img src="" alt="cam_{{i + 1}}">
+    {% endfor %}
+</body>
+
+</html>
