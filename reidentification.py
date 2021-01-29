@@ -1,8 +1,8 @@
-mport tensorflow as tf
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import tensorflow as tf
 import numpy as np
 import pybktree
 import collections
+
 
 db = collections.namedtuple('person', 'id-bits')
 threshold = 2 # hyperparam

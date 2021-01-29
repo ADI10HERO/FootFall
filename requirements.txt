@@ -2,3 +2,4 @@ opencv-python
 flask
 numpy
 scipy
+pykbtree

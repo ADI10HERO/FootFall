@@ -6,7 +6,7 @@ import time
 from threading import Thread
 
 from detection import detect
-from reidentification import reid
+# from reidentification import reid
 from utils.misc import get_box, read_py_config, preprocess_image
 from utils.video import MulticamCapture
 
@@ -55,30 +55,28 @@ def main(input_urls, prob_threshold=0.6, output=None):
             frames = None
 
         if frames is None:
-            continue    
-        
-        # Person detection model
-        detect(model_path="detector/frozen_inference_graph.pb")
-        
-        # TODO: Manequinn removal call here
-        
-        # TODO: Re-id call here
+            continue
+
+        for i,frame in enumerate(frames):
+            # Person detection model
+            frame, frame_count = detect(frame)
+
+            # TODO: Manequinn removal call here    
+            # TODO: Re-id call here
+
+            ret, jpeg = cv.imencode('.jpg', frame)
+            frames[i] = [jpeg, frame_count]
 
         if output_video:
+            # TODO: Concat frames and write output
+            # vis = concat(frames)
             output_video.write(cv.resize(vis, video_output_size))
 
-        # for frame in frames:
-        #     ret, jpeg = cv.imencode('.jpg', frame)
         yield frames
-            #(b'--frame\r\n'
-               # b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
 
     thread_body.process = False
     frames_thread.join()
 
-    print(list(run(capture, args)))
-
 
 if __name__ == "__main__":
     raise NotImplementedError("Please use flask app.")
-

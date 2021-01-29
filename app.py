@@ -36,6 +36,8 @@ from main import main
 app = Flask(__name__)
 input = None
 frames = []
+frame_counts = []
+
 logging.basicConfig(level=logging.INFO)
 
 # TODO: Integrate this
@@ -50,18 +52,19 @@ logging.basicConfig(level=logging.INFO)
 #     return Response(gen(VideoCamera()),
 #                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
+
 def get_single_frame(idx):
     global frames
     if frames == []:
         time.sleep(1)
     idx = int(idx)
-    print(idx, frames)
     yield (b'--frame\r\n'
-            b'Content-Type: image/jpeg\r\n\r\n' + frames[idx-1] + b'\r\n\r\n')
+            b'Content-Type: image/jpeg\r\n\r\n' + frames[idx-1].tobytes() + b'\r\n\r\n')
+
 
 @app.route("/view/<id>")
 def view_stream(id):
-    global input, frames
+    global input, frames, frame_counts
     if input is None or frames == []:
         time.sleep(2)
     return Response(get_single_frame(id), mimetype='multipart/x-mixed-replace; boundary=frame')
@@ -69,21 +72,22 @@ def view_stream(id):
 
 @app.route("/video_stream", methods=["POST"])
 def process():
-    global input
+    global input, frames, frame_counts
     if request.method == "POST":
         data = dict(request.form)
         data["ondevice"] = False
-        # TODO: Call main subroutine here :)
-        #       Render detected video and other params
-        # param: total count, count in each cam
-        input = [data["cam_" + str(i+1)] for i in range(int(data["num_cam"]))]
-        frames = main(input)
-        print(frames)
-        # return Response(main(input), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+        num_cams = int(data["num_cam"])
+        input = [data["cam_" + str(i+1)] for i in range(num_cams)]
+
+        data = next(main(input))
+        frames = [frame[0] for frame in data ]
+        frame_counts = [frame[1] for frame in data ]
+
         return render_template( "dashboard.html",
-            total_count=10,
-            cam_counts=[6,4],
-            num_cam=2
+            total_count=sum(frame_counts),
+            cam_counts=frame_counts,
+            num_cam=num_cams
         )
 
     if request.method == "GET":

@@ -4,6 +4,8 @@ import cv2
 import time
 
 
+MODEL_PATH = "detector/frozen_inference_graph.pb"
+
 class DetectorAPI:
     def __init__(self, path_to_ckpt):
         self.path_to_ckpt = path_to_ckpt
@@ -54,60 +56,35 @@ class DetectorAPI:
         self.default_graph.close()
 
 
-def detect(model_path, video_path, threshold=0.63, output_path='output.avi'):
+odapi = DetectorAPI(path_to_ckpt=MODEL_PATH)
+
+def detect(img, threshold=0.63):
     """
     Parameters
     -----------
-
-    model_path: String
-        Path to the frozen_inference_graph.pb for the model
-
     threshold: float
         Confidence threshold for detection
 
-    video_path: String or Int
-        Path to the input video. Integer for camera index.
-        Default is webcam 
-
-    output_path: String
-        Path to output video file
-
+    img: cv2 image object
+        Single image frame
     """
-    cap = cv2.VideoCapture(video_path)
-    writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'MJPG'), 10, (600,600))
-    odapi = DetectorAPI(path_to_ckpt=model_path)
 
-    while True:
-        r, img = cap.read()
-        img = cv2.resize(img, (600, 600))
+    img = cv2.resize(img, (640, 480))
+    boxes, scores, classes, num = odapi.processFrame(img)
+    # print("\n\n ====NUM===== ", num, len(boxes))
 
-        boxes, scores, classes, num = odapi.processFrame(img)
-        # Visualization of the results of a detection.
+    count_ppl = 0
+    for i in range(len(boxes)):
 
-        count_ppl = 0
-        for i in range(len(boxes)):
-            # Class 1 represents human
-            if classes[i] == 1 and scores[i] > threshold:
-                count_ppl += 1
-                box = boxes[i]
-                cv2.rectangle(img,(box[1],box[0]),(box[3],box[2]),(255,0,0),2)
+        if classes[i] != 1 or not (scores[i] > threshold):
+            # class 1 represents humans
+            continue
 
-        img = cv2.putText(img, 'Count :'+str(count_ppl), (30, 30), cv2.FONT_HERSHEY_SIMPLEX,  
-                1, (0, 0, 255), 2, cv2.LINE_AA)
-        cv2.imshow("People Counting", img)
-        print("Count :", count_ppl)
+        count_ppl += 1
+        box = boxes[i]
+        cv2.rectangle(img,(box[1],box[0]),(box[3],box[2]),(255,0,0),2)
 
-        if writer is not None:
-            writer.write(img)
+    img = cv2.putText(img, 'Count :'+str(count_ppl), (30, 30), cv2.FONT_HERSHEY_SIMPLEX,  
+            1, (0, 0, 255), 2, cv2.LINE_AA)
 
-        key = cv2.waitKey(1)
-        if key & 0xFF == ord('q'):
-            break
-
-
-if __name__ == "__main__":
-
-    model_path = "detector/frozen_inference_graph.pb"
-    video_path = "resources/ppl.avi"
-    
-    detect(model_path, video_path)
+    return img, count_ppl
