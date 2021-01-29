@@ -31,7 +31,7 @@
                     <h3> Camera {{i + 1}}: {{cam_counts[i]}} </h3>
                 </div>
                 <div class="col-lg-8">
-                    <img src="{{ url_for('view_stream', id=i+1) }}" alt="cam_{{i + 1}}">
+                    <img src="{{ url_for('get_single_frame', idx=i+1) }}" alt="cam_{{i + 1}}">
                 </div>
             </div>
         {% endfor %}

@@ -40,58 +40,14 @@ frame_counts = []
 
 logging.basicConfig(level=logging.INFO)
 
-# TODO: Integrate this
-# def gen(camera):
-#     while True:
-#         frame = camera.get_frame()
-#         yield (b'--frame\r\n'
-#                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
-# @app.route('/video_feed')
-# def video_feed():
-#     return Response(gen(VideoCamera()),
-#                     mimetype='multipart/x-mixed-replace; boundary=frame')
-
-
-def get_single_frame(idx):
-    global frames
-    if frames == []:
-        time.sleep(1)
-    idx = int(idx)
-    yield (b'--frame\r\n'
-            b'Content-Type: image/jpeg\r\n\r\n' + frames[idx-1].tobytes() + b'\r\n\r\n')
-
-
-@app.route("/view/<id>")
-def view_stream(id):
-    global input, frames, frame_counts
-    if input is None or frames == []:
-        time.sleep(2)
-    return Response(get_single_frame(id), mimetype='multipart/x-mixed-replace; boundary=frame')
-
-
-@app.route("/video_stream", methods=["POST"])
-def process():
-    global input, frames, frame_counts
+@app.route("/", methods=["GET", "POST"])
+def home():
     if request.method == "POST":
-        data = dict(request.form)
-        data["ondevice"] = False
-
-        num_cams = int(data["num_cam"])
-        input = [data["cam_" + str(i+1)] for i in range(num_cams)]
-
-        data = next(main(input))
-        frames = [frame[0] for frame in data ]
-        frame_counts = [frame[1] for frame in data ]
-
-        return render_template( "dashboard.html",
-            total_count=sum(frame_counts),
-            cam_counts=frame_counts,
-            num_cam=num_cams
-        )
+        return "Dude...Implement Basic Auth!"
 
     if request.method == "GET":
-        return render_template("dashboard.html")
+        return render_template("index.html")
 
 
 @app.route("/basic", methods=["GET", "POST"])
@@ -111,13 +67,44 @@ def basic():
         return render_template("index.html")
 
 
-@app.route("/", methods=["GET", "POST"])
-def home():
+@app.route("/video_stream", methods=["POST"])
+def process():
+    global input, frames, frame_counts
     if request.method == "POST":
-        return "Dude...Implement Basic Auth!"
+        data = dict(request.form)
+        data["ondevice"] = False
+
+        num_cams = int(data["num_cam"])
+        input = [data["cam_" + str(i+1)] for i in range(num_cams)]
+
+        return render_template("dashboard.html",
+            total_count=sum(frame_counts),
+            cam_counts=frame_counts,
+            num_cam=num_cams
+        )
 
     if request.method == "GET":
-        return render_template("index.html")
+        return render_template("dashboard.html")
+
+
+def view_stream(id):
+
+    global input, frames, frame_counts
+    if input is None or frames == [] or frame_counts == []:
+        time.sleep(1)
+
+    for data in main(input):
+        frames = [ frame[0] for frame in data ]
+        frame_counts = [ frame[1] for frame in data ]
+        print(frame_counts)
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frames[id-1].tobytes() + b'\r\n\r\n')
+
+
+@app.route("/view/<idx>")
+def get_single_frame(idx):
+    idx = int(idx)
+    return Response(view_stream(idx), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 if __name__ == "__main__":
