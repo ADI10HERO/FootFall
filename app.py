@@ -23,15 +23,19 @@
 from flask import (
     Flask,
     jsonify,
-    request,
-    send_from_directory,
     render_template,
+    request,
+    Response,
+    send_from_directory,
 )
 import logging
+import time
 from logging import info
-# from main import main
+from main import main
 
 app = Flask(__name__)
+input = None
+frames = []
 logging.basicConfig(level=logging.INFO)
 
 # TODO: Integrate this
@@ -46,26 +50,44 @@ logging.basicConfig(level=logging.INFO)
 #     return Response(gen(VideoCamera()),
 #                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
+def get_single_frame(idx):
+    global frames
+    if frames == []:
+        time.sleep(1)
+    idx = int(idx)
+    print(idx, frames)
+    yield (b'--frame\r\n'
+            b'Content-Type: image/jpeg\r\n\r\n' + frames[idx-1] + b'\r\n\r\n')
+
+@app.route("/view/<id>")
+def view_stream(id):
+    global input, frames
+    if input is None or frames == []:
+        time.sleep(2)
+    return Response(get_single_frame(id), mimetype='multipart/x-mixed-replace; boundary=frame')
+
 
 @app.route("/video_stream", methods=["POST"])
 def process():
+    global input
     if request.method == "POST":
         data = dict(request.form)
         data["ondevice"] = False
         # TODO: Call main subroutine here :)
         #       Render detected video and other params
         # param: total count, count in each cam
-        total_count, cam_counts, frames = main(data)
-        return render_template(
-            "dashboard.html",
-            total_count=total_count,
-            cam_counts=cam_counts,
-            frames=frames,
-            num_cam=len(cam_counts),
+        input = [data["cam_" + str(i+1)] for i in range(int(data["num_cam"]))]
+        frames = main(input)
+        print(frames)
+        # return Response(main(input), mimetype='multipart/x-mixed-replace; boundary=frame')
+        return render_template( "dashboard.html",
+            total_count=10,
+            cam_counts=[6,4],
+            num_cam=2
         )
 
     if request.method == "GET":
-        return render_template("index.html")
+        return render_template("dashboard.html")
 
 
 @app.route("/basic", methods=["GET", "POST"])
