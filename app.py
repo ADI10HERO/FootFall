@@ -1,25 +1,3 @@
-"""People Counter."""
-"""
- Copyright (c) 2018 Intel Corporation.
- Copyright (c) 2021 Aditya Srivastava.
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit person to whom the Software is furnished to do so, subject to
- the following conditions:
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-"""
-
 from flask import (
     Flask,
     jsonify,
@@ -28,16 +6,21 @@ from flask import (
     Response,
     send_from_directory,
 )
+from flask_socketio import SocketIO, emit
 import logging
 import time
 from logging import info
 from main import main
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!' #TODO: Move to env file.
+socketio = SocketIO(app, cors_allowed_origins="*")
+
+
 input = None
 frames = []
 frame_counts = []
-
+total_count = 0
 logging.basicConfig(level=logging.INFO)
 
 
@@ -78,7 +61,6 @@ def process():
         input = [data["cam_" + str(i+1)] for i in range(num_cams)]
 
         return render_template("dashboard.html",
-            total_count=sum(frame_counts),
             cam_counts=frame_counts,
             num_cam=num_cams
         )
@@ -89,13 +71,14 @@ def process():
 
 def view_stream(id):
 
-    global input, frames, frame_counts
+    global input, frames, frame_counts, total_count
     if input is None or frames == [] or frame_counts == []:
         time.sleep(1)
 
     for data in main(input):
         frames = [ frame[0] for frame in data ]
         frame_counts = [ frame[1] for frame in data ]
+        total_count = sum(frame_counts)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frames[id-1].tobytes() + b'\r\n\r\n')
 
@@ -105,6 +88,17 @@ def get_single_frame(idx):
     idx = int(idx)
     return Response(view_stream(idx), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+# socket routes below
+
+@socketio.on('connect')
+def test_connect():
+    emit('after connect',  {'data':'Connected!'})
+
+@socketio.on('need tc')
+def update_tc(msg):
+    global total_count
+    print("\n\n\n -----------------", total_count)
+    emit('update tc', total_count)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    socketio.run(app, debug=True)
