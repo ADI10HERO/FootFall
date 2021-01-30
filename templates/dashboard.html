@@ -42,11 +42,11 @@
     <script>
         $(document).ready(function(){
             // sending a connect request to the server.
-            var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
-
-            socket.on('update', function(data){
-                console.log('updated', data);
-                $("#totalcount").text("Total Count: " + tc.toString());
+            var socket = io.connect('http://' + document.domain + ':' + location.port);
+            console.log("lauasdaksdaksn")
+            socket.on('updatedata', function(msg) {
+                console.log("Received number")// + msg.total_count);
+                $('#totalcount').html('' + msg.total_count);
             });
 
         });

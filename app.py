@@ -18,7 +18,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!' #TODO: Move to env file.
 app.config['DEBUG'] = True
 
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*", logger=True, engineio_logger=True)
 
 
 input = None
@@ -83,6 +83,7 @@ def view_stream(id):
         frames = [ frame[0] for frame in data ]
         frame_counts = [ frame[1] for frame in data ]
         total_count = sum(frame_counts)
+        print(total_count, frame_counts)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frames[id-1].tobytes() + b'\r\n\r\n')
 
@@ -103,15 +104,14 @@ def update():
             'total_count': total_count,
             'frame_counts': frame_counts
             }
-    print("ererere")
 
     while not thread_stop_event.isSet():
-        print("in here")
-        socketio.emit('update', data, namespace='/test')
+        print(data)
+        socketio.emit('updatedata', data)
         socketio.sleep(2)
 
 
-@socketio.on('connect', namespace='/test')
+@socketio.on('connect')
 def test_connect():
     global thread
     print("Client Connected")
@@ -121,7 +121,7 @@ def test_connect():
         thread = socketio.start_background_task(update())
 
 
-@socketio.on('disconnect', namespace='/test')
+@socketio.on('disconnect')
 def test_disconnect():
     print('Client disconnected')
 
