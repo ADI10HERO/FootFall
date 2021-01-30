@@ -11,10 +11,12 @@ import logging
 import time
 from logging import info
 from main import main
+from threading import Thread, Event
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!' #TODO: Move to env file.
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode=None, logger=True, engineio_logger=True)
 
 
 input = None
@@ -89,6 +91,9 @@ def get_single_frame(idx):
     return Response(view_stream(idx), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 # socket routes below
+thread = Thread()
+thread_stop_event = Event()
+
 
 def update_tc():
     global total_count
