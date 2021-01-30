@@ -14,23 +14,31 @@
 <body>
     
     <div class="container">
-        <div class="row">
-            <h1>Dashboard</h1>
+        <div class="row text-center">
+            <div class="col"> 
+                <h1 style="font: xx-large">FootFall</h1>
+            </div>
         </div>
 
         <form action="/video_stream" method="post">
             <input type="text" name="num_cam" value="{{num_cams}}" hidden> 
-            {% for i in range(num_cams) %} 
-                <label for="cam_{{i + 1}}"> Enter URL for Camera {{ i + 1 }}: </label>
-                <input type="text" name="cam_{{i + 1}}" id="cam_{{ i + 1 }}">
-                <br><br> 
-            {% endfor %}
-            <input type="submit" value="Submit">
+            <div class="row text-center">
+                {% for i in range(num_cams) %}
+                    <div class="col-lg-6"> 
+                        <label for="cam_{{i + 1}}"> Enter URL for Camera {{ i + 1 }}: </label>
+                        <input type="text" class="form-control" name="cam_{{i + 1}}" id="cam_{{ i + 1 }}">
+                        <br><br> 
+                    </div>
+                {% endfor %}
+            </div>
+            <br>
+            <div class="row justify-content-center">
+                <div class="col-lg-4 col-lg-offset-4">
+                   <input type="submit" class="form-control" value="Submit">
+                </div>
+            </div>
         </form> 
     </div>
-
-
-   
 </body>
 
 </html>

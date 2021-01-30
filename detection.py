@@ -3,6 +3,8 @@ import tensorflow as tf
 import cv2
 import time
 
+from utils.misc import pre_reid_process
+
 
 MODEL_PATH = "detector/frozen_inference_graph.pb"
 
@@ -83,10 +85,10 @@ def detect(img, threshold=0.63):
 
         count_ppl += 1
         box = boxes[i]
-        detections.append(pre_reid_process(box, frame))
+        # detections.append(pre_reid_process(box, frame))
         cv2.rectangle(img,(box[1],box[0]),(box[3],box[2]),(255,0,0),2)
 
     img = cv2.putText(img, 'Count :'+str(count_ppl), (30, 30), cv2.FONT_HERSHEY_SIMPLEX,  
             1, (0, 0, 255), 2, cv2.LINE_AA)
 
-    return img, count_ppl, detectionss
+    return img, count_ppl, detections
