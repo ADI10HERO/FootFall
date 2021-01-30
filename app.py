@@ -16,7 +16,9 @@ from threading import Thread, Event
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!' #TODO: Move to env file.
-socketio = SocketIO(app, cors_allowed_origins="*") #, async_mode=None, logger=True, engineio_logger=True)
+app.config['DEBUG'] = True
+
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 
 input = None
@@ -91,36 +93,38 @@ def get_single_frame(idx):
     return Response(view_stream(idx), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 # socket routes below
-thread_tc = Thread()
-thread_tc_stop_event = Event()
+thread = Thread()
+thread_stop_event = Event()
 
-def update_tc():
-    global total_count
-    while not thread_tc_stop_event.isSet():
-        socketio.emit('update tc', total_count, namespace='/test')
+def update():
+    global total_count, frame_counts
 
+    data = {
+            'total_count': total_count,
+            'frame_counts': frame_counts
+            }
+    print("ererere")
 
-thread_fc = Thread()
-thread_fc_stop_event = Event()
-
-def update_frame_counts():
-    global frame_counts
-    while not thread_fc_stop_event.isSet():
-        emit('update fcounts', frame_counts, namespace='/test')
+    while not thread_stop_event.isSet():
+        print("in here")
+        socketio.emit('update', data, namespace='/test')
+        socketio.sleep(2)
 
 
 @socketio.on('connect', namespace='/test')
 def test_connect():
-    global thread_fc, thread_tc
+    global thread
+    print("Client Connected")
 
-    if not thread_tc.isAlive():
-        print("Starting TC Thread")
-        thread_tc = socketio.start_background_task(update_tc())
-    
-    if not thread_fc.isAlive():
-        print("Starting FC Thread")
-        thread_fc = socketio.start_background_task(update_frame_counts())
+    if not thread.isAlive():
+        print("Starting Thread")
+        thread = socketio.start_background_task(update())
+
+
+@socketio.on('disconnect', namespace='/test')
+def test_disconnect():
+    print('Client disconnected')
 
 
 if __name__ == "__main__":
-    socketio.run(app, debug=True)
+    socketio.run(app)
