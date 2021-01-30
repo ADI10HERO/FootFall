@@ -52,13 +52,12 @@
 
             socket.on('update tc', function(tc){
                 console.log('update tc', tc);
-                $("#totalcount").val = "Total Count: " + tc;
+                $("#totalcount").val("Total Count: " + tc.toString());
             });
 
             socket.on('update fcounts', function(frame_counts){
                 // loop here
                 console.log('update fcounts', frame_counts);
-
                 // $(document).getElementbyId("totalcount").value = "Total Count: " + tc;
             });
 

@@ -92,13 +92,14 @@ def get_single_frame(idx):
 
 def update_tc():
     global total_count
-    print("\n\n\n -----------------", total_count)
-    emit('update tc', total_count, namespace='/test')
+    while True:
+        emit('update tc', total_count, namespace='/test')
 
 
 def update_frame_counts():
     global frame_counts
-    emit('update fcounts', frame_counts, namespace='/test')
+    while True:
+        emit('update fcounts', frame_counts, namespace='/test')
 
 
 @socketio.on('connect', namespace='/test')
