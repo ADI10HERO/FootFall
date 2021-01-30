@@ -104,8 +104,8 @@ def update_frame_counts():
 
 @socketio.on('connect', namespace='/test')
 def test_connect():
-    update_tc()
-    update_frame_counts()
+    socketio.start_background_task(update_tc())
+    socketio.start_background_task(update_frame_counts())
     emit('after connect',  {'data':'Connected!'}, namespace='/test')
 
 
