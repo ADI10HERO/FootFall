@@ -68,8 +68,12 @@ def preprocess_image(frame, widht, height):
     return image
 
 
-def pre_reid_process(frame):
+def pre_reid_process(box, frame):
     # TODO: Write cropping --> 9x9 --> Grayscale --> return list of detections?
+    # crop frame (img) according to box coords
+    # Grayscale
+    # Compress (resize) to 9x9
+    # Return cropped frame 
     return frame
 
 

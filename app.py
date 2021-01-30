@@ -96,7 +96,6 @@ def view_stream(id):
     for data in main(input):
         frames = [ frame[0] for frame in data ]
         frame_counts = [ frame[1] for frame in data ]
-        print(frame_counts)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frames[id-1].tobytes() + b'\r\n\r\n')
 

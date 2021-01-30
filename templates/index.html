@@ -2,22 +2,49 @@
 
 <head>
     <title>FootFall</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 
+
 <body>
-    <h1>Dashboard</h1>
-    <form action="/basic" method="post">
-        <label for="num_cams">Enter Number of Cameras</label>
-        <input type="number" name="num_cams" id="num_cams">
-        <br>
-        <label for="ques">Are these cameras connected to this machine?</label>
-        <select name="ques" id="ques">
-            <option value="yes">Yes</option>
-            <option value="no" selected>No</option>
-        </select>
-        <br>
-        <input type="submit" value="Submit">
-    </form>
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4"> 
+                <h1 style="font: xx-large">FootFall</h1>
+            </div>
+        </div>
+
+         <form action="/basic" method="post">
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <label for="num_cams">Enter Number of Cameras</label>
+                    <input type="number" class="form-control" name="num_cams" id="num_cams">
+                </div>
+            </div>
+            <br>
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <label for="ques">Are these cameras connected to this machine?</label>
+                    <select class="form-control" name="ques" id="ques">
+                        <option value="yes">Yes</option>
+                        <option value="no" selected>No</option>
+                    </select>
+                </div>
+            </div>
+            <br>                
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <input class="form-control" type="submit" value="Submit">
+                </div>
+            </div>
+        </form>
+    </div>
+    
 </body>
 
 </html>
