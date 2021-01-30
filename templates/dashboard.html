@@ -42,17 +42,9 @@
     </div>
 
     <script>
-            window.onload = function() {
+        $(document).ready(function(){
             // sending a connect request to the server.
-            var socket = io.connect('http://localhost:5000');
-
-            document.getElementById("totalcount").onload = function() {
-                console.log("Here");
-                socket.emit('need tc', {
-                    'msg':  "need updated value"
-                });
-               return false;
-            }
+            var socket = io.connect('http://localhost:5000/test');
 
             socket.on('after connect', function(msg){
                 console.log('After connect', msg);
@@ -60,11 +52,17 @@
 
             socket.on('update tc', function(tc){
                 console.log('update tc', tc);
-                $(document).getElementbyId("totalcount").value = "Total Count: " + tc;
+                $("#totalcount").val = "Total Count: " + tc;
             });
 
+            socket.on('update fcounts', function(frame_counts){
+                // loop here
+                console.log('update fcounts', frame_counts);
 
-        };
+                // $(document).getElementbyId("totalcount").value = "Total Count: " + tc;
+            });
+
+        });
     </script>
 </body>
 
