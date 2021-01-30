@@ -16,7 +16,7 @@ from threading import Thread, Event
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!' #TODO: Move to env file.
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode=None, logger=True, engineio_logger=True)
+socketio = SocketIO(app, cors_allowed_origins="*") #, async_mode=None, logger=True, engineio_logger=True)
 
 
 input = None
@@ -91,27 +91,35 @@ def get_single_frame(idx):
     return Response(view_stream(idx), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 # socket routes below
-thread = Thread()
-thread_stop_event = Event()
-
+thread_tc = Thread()
+thread_tc_stop_event = Event()
 
 def update_tc():
     global total_count
-    while True:
-        emit('update tc', total_count, namespace='/test')
+    while not thread_tc_stop_event.isSet():
+        socketio.emit('update tc', total_count, namespace='/test')
 
+
+thread_fc = Thread()
+thread_fc_stop_event = Event()
 
 def update_frame_counts():
     global frame_counts
-    while True:
+    while not thread_fc_stop_event.isSet():
         emit('update fcounts', frame_counts, namespace='/test')
 
 
 @socketio.on('connect', namespace='/test')
 def test_connect():
-    socketio.start_background_task(update_tc())
-    socketio.start_background_task(update_frame_counts())
-    emit('after connect',  {'data':'Connected!'}, namespace='/test')
+    global thread_fc, thread_tc
+
+    if not thread_tc.isAlive():
+        print("Starting TC Thread")
+        thread_tc = socketio.start_background_task(update_tc())
+    
+    if not thread_fc.isAlive():
+        print("Starting FC Thread")
+        thread_fc = socketio.start_background_task(update_frame_counts())
 
 
 if __name__ == "__main__":
