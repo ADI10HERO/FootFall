@@ -60,7 +60,6 @@ def main(input_urls, prob_threshold=0.6, output=None):
         for i,frame in enumerate(frames):
             # Person detection model
             frame, frame_count, detections = detect(frame)
-
             # TODO: Manequinn removal call here    
             # TODO: Re-id call here
 

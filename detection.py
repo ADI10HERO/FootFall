@@ -85,7 +85,7 @@ def detect(img, threshold=0.63):
 
         count_ppl += 1
         box = boxes[i]
-        # detections.append(pre_reid_process(box, frame))
+        detections.append(pre_reid_process(box, img))
         cv2.rectangle(img,(box[1],box[0]),(box[3],box[2]),(255,0,0),2)
 
     img = cv2.putText(img, 'Count :'+str(count_ppl), (30, 30), cv2.FONT_HERSHEY_SIMPLEX,  
