@@ -17,9 +17,9 @@ class MulticamCapture:
             for id in sources:
                 log.info('Connection  cam {}'.format(id))
                 cap = cv.VideoCapture(id)
-                cap.set(cv.CAP_PROP_FRAME_WIDTH, 1280)
-                cap.set(cv.CAP_PROP_FRAME_HEIGHT, 720)
-                cap.set(cv.CAP_PROP_FPS, 30)
+                cap.set(cv.CAP_PROP_FRAME_WIDTH, 480)
+                cap.set(cv.CAP_PROP_FRAME_HEIGHT, 360)
+                cap.set(cv.CAP_PROP_FPS, 25)
                 cap.set(cv.CAP_PROP_FOURCC, cv.VideoWriter_fourcc(*'MJPG'))
                 assert cap.isOpened()
                 self.captures.append(cap)
@@ -27,6 +27,8 @@ class MulticamCapture:
             for video_path in sources:
                 log.info('Opening file {}'.format(video_path))
                 cap = cv.VideoCapture(video_path)
+                cap.set(3, 480)
+                cap.set(4, 360)
                 assert cap.isOpened()
                 self.captures.append(cap)
 

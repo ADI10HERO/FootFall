@@ -59,6 +59,7 @@ def main(input_urls, prob_threshold=0.6, output=None):
 
         for i,frame in enumerate(frames):
             # Person detection model
+            frame = cv.resize(frame, (480, 360))
             frame, frame_count, detections = detect(frame)
             # TODO: Manequinn removal call here    
             # TODO: Re-id call here
