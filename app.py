@@ -15,10 +15,10 @@ from threading import Thread, Event
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!' #TODO: Move to env file.
+app.config['SECRET_KEY'] = 'secret!'
 app.config['DEBUG'] = True
 
-socketio = SocketIO(app, cors_allowed_origins="*", logger=True, engineio_logger=True)
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode=None, logger=True, engineio_logger=True)
 
 
 input = None
@@ -97,34 +97,35 @@ def get_single_frame(idx):
 thread = Thread()
 thread_stop_event = Event()
 
-def update():
+
+def getupdatedinfo():
+
     global total_count, frame_counts
 
-    data = {
-            'total_count': total_count,
-            'frame_counts': frame_counts
-            }
-
+    print("Starting stream")
     while not thread_stop_event.isSet():
-        print(data)
-        socketio.emit('updatedata', data)
+        data = {
+            'total_count': total_count,
+            'frame_counts': [2, 3]
+        }
+        socketio.emit('newdata', data, namespace='/test')
         socketio.sleep(2)
 
 
-@socketio.on('connect')
+@socketio.on('connect', namespace='/test')
 def test_connect():
     global thread
     print("Client Connected")
 
     if not thread.isAlive():
         print("Starting Thread")
-        thread = socketio.start_background_task(update())
+        thread = socketio.start_background_task(getupdatedinfo)
 
 
-@socketio.on('disconnect')
+@socketio.on('disconnect', namespace='/test')
 def test_disconnect():
     print('Client disconnected')
 
 
 if __name__ == "__main__":
-    socketio.run(app)
+    socketio.run(app, debug=True)

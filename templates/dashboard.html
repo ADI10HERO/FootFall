@@ -2,16 +2,11 @@
 
 <head>
     <title>FootFall</title>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
-
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
-
+    
 <body>
 
     <div class="container">
@@ -22,17 +17,17 @@
 
         <div class="row">
             <div class="col-lg-7">
-                <h3 id="totalcount">Total Count: </h3>
+                <h3 id="totalcount"></h3>
             </div>
         </div>
 
         {% for i in range(num_cam) %}
             <div class="row">
                 <div class="col-lg-4">
-                    <h3> Camera {{i + 1}}: {{cam_counts[i]}} </h3>
+                    <h3 id="fc{{i}}"></h3>
                 </div>
                 <div class="col-lg-8">
-                    <img src="{{ url_for('get_single_frame', idx=i+1) }}" alt="cam_{{i + 1}}">
+                    <!--img src="{{ url_for('get_single_frame', idx=i+1) }}" alt="cam_{{i + 1}}"-->
                 </div>
             </div>
         {% endfor %}
@@ -42,13 +37,16 @@
     <script>
         $(document).ready(function(){
             // sending a connect request to the server.
-            var socket = io.connect('http://' + document.domain + ':' + location.port);
-            console.log("lauasdaksdaksn")
-            socket.on('updatedata', function(msg) {
-                console.log("Received number")// + msg.total_count);
-                $('#totalcount').html('' + msg.total_count);
+           var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
+    
+            socket.on('newdata', function(msg) {
+                console.log("Received number" + msg.total_count);
+                $('#totalcount').html('Total Count: ' + msg.total_count);
+                var frame_counts = msg.frame_counts;
+                for(i = 0; i < frame_counts.length; i++){
+                    $('#fc'+i).html("Camera " + (i + 1) + ": " + frame_counts[i]);
+                }
             });
-
         });
     </script>
 </body>
