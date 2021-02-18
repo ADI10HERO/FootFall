@@ -4,40 +4,124 @@
     <title>FootFall</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="../static/logo-sm.png" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            background-image: radial-gradient(#00B9BA, #00AA87);
+            font-family: 'Segoe UI';
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .display-5 {
+            font-size: 2.5rem;
+            font-family: "Segoe UI", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-weight: lighter;
+        }
+        
+        .display-6 {
+            font-size: 1.5rem;
+            font-family: "Segoe UI", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-weight: lighter;
+        }
+        
+        nav {
+            background-color: rgba(6, 52, 94, 0.80);
+        }
+        
+        .footer {
+            position: absolute;
+            width: 100%;
+            bottom: 0%;
+            overflow-x: hidden;
+        }
+    </style>
 </head>
 
 
 <body>
-    
-    <div class="container">
-        <div class="row text-center">
-            <div class="col"> 
-                <h1 style="font: xx-large">FootFall</h1>
-            </div>
-        </div>
 
-        <form action="/info/2" method="post">
-            <div class="row text-center">
-                {% for i in range(num_cams) %}
-                    <div class="col-lg-6"> 
-                        <label for="cam_{{i + 1}}"> Enter URL for Camera {{ i + 1 }}: </label>
-                        <input type="text" class="form-control" name="cam_{{i + 1}}" id="cam_{{ i + 1 }}">
-                        <br><br> 
-                    </div>
-                {% endfor %}
+    <section id="intro">
+
+        <!-- <nav class="navbar py-sm-3 py-5 navbar-expand-md fixed-top navbar-dark">
+            <a class="navbar-brand" href="#">
+                <img src="../static/logo-white-no-bg.png" height="50" width="100" alt="logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/#get_started">Get Started</a>
+                    </li>
+                </ul>
             </div>
-            <br>
-            <div class="row justify-content-center">
-                <div class="col-lg-4 col-lg-offset-4">
-                   <input type="submit" class="form-control" value="Submit">
+        </nav> -->
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 offset-lg-2">
+                    <img src="../static/logo-white-no-bg.png" alt="">
                 </div>
             </div>
-        </form> 
-    </div>
+
+        </div>
+
+    </section>
+    <section id="form">
+
+        <div class="container mx-auto mb-5 p-5" style="background-color: #06345E; border-radius: 2rem;">
+            <form action="/info/2" method="post">
+                <div class="row">
+                    {% for i in range(num_cams) %}
+                    <div class="mx-auto col-lg-6 input-group mb-5">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="cam_{{i + 1}}">
+                                <i class="fa fa-camera" style="color: #00B9BA"></i>
+                            </span>
+                            <!-- <label for="cam_{{i + 1}}"> Enter URL for Camera {{ i + 1 }}: </label> -->
+                        </div>
+                        <input type="text" class="form-control" name="cam_{{i + 1}}" id="cam_{{ i + 1 }}" placeholder="Enter URL for Camera {{ i + 1 }}">
+                    </div>
+                    {% endfor %}
+                </div>
+                <br>
+                <div class="row justify-content-center ">
+                    <div class="mx-auto mb-3">
+                        <button class="btn btn-outline-light btn-lg m-2 rounded-pill" type="submit">
+                            <div class="display-6">Submit</div>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </section>
+
+    <section id="footer">
+        <footer class="bg-light text-center text-lg-start">
+            <div class="text-center p-3 " style="background-color:#06345E; color: white; ">
+                © 2021 FootFall
+            </div>
+        </footer>
+    </section>
+
 </body>
 
 </html>

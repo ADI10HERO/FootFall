@@ -2,52 +2,120 @@
 
 <head>
     <title>FootFall</title>
+    <title>FootFall</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="../static/logo-sm.png" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: radial-gradient(#00B9BA, #00AA87);
+            font-family: 'Segoe UI';
+            color: white;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .display-5 {
+            font-size: 2.5rem;
+            font-family: "Segoe UI", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-weight: lighter;
+        }
+        
+        .display-6 {
+            font-size: 1.5rem;
+            font-family: "Segoe UI", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-weight: lighter;
+        }
+        
+        nav {
+            background-color: rgba(6, 52, 94, 0.80);
+        }
+        
+        .footer {
+            position: absolute;
+            width: 100%;
+            bottom: 0%;
+            overflow-x: hidden;
+        }
+        
+        img {
+            border-radius: 2rem;
+        }
+    </style>
 </head>
 
 <body>
 
-    <div class="container">
+    <section class="intro">
 
-        <div class="row">
-            <h1>Dashboard</h1>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-7">
-                <h3 id="totalcount"></h3>
+        <div class="container">
+            <div class="row justify-content-center">
+                <img src="../static/dashboard-logo-no-bg.png" alt="">
             </div>
         </div>
 
-        {% for i in range(num_cams) %}
-            <div class="row">
-                <div class="col-lg-4">
-                    <h3 id="fc{{i}}"></h3>
-                </div>
-                <div class="col-lg-8">
-                    <img id="f{{i}}" alt="cam_{{i + 1}}" src="">
+    </section>
+
+    <section class="cams">
+        <div class="container mx-auto mb-5 p-5" style="background-color: #06345E; border-radius: 2rem;">
+            <div class="row text-center">
+                <div class="col mb-5">
+                    <div class="display-3 " id="totalcount"></div>
                 </div>
             </div>
-        {% endfor %}
+        </div>
 
-    </div>
+        <div class="container mx-auto mb-5 p-5" style="background-color: #06345E; border-radius: 2rem;">
+
+            {% for i in range(num_cams) %} 
+                {% if i%2 != 0 %}
+                    <div class="row mb-3 ">
+                        <div class="col-lg-4 offset-lg-1 display-4 " id="fc{{i}}"></div>
+                        <img class="col-lg-4 offset-lg-2 p-3 " id="f{{i}}" alt="cam_{{i + 1}}" src="" style="height: 300px ">
+                    </div>
+                {% else %}
+                    <div class="row mb-3 ">
+                        <img class="col-lg-4 offset-lg-1 p-3 " id="f{{i}}" alt="cam_{{i + 1}}" src="" style="height: 300px ">
+                        <div class="col-lg-4 offset-lg-2 display-4 " id="fc{{i}}"></div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+    </section>
+    <section id="footer">
+        <footer class="bg-light text-center text-lg-start ">
+            <div class="text-center p-3 " style="background-color:#06345E; color: white; ">
+                © 2021 FootFall
+            </div>
+        </footer>
+    </section>
+
+
 
     <script>
-        $(document).ready(function(){
+        $(document).ready(function() {
 
-           var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
-    
+            var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
+
             socket.on('newdata', function(msg) {
                 $('#totalcount').html('Total Count: ' + msg.total_count);
                 var frame_counts = msg.frame_counts;
-                for(i = 0; i < frame_counts.length; i++){
-                    $('#fc'+i).html("Camera " + (i + 1) + ": " + frame_counts[i]);
+                for (i = 0; i < frame_counts.length; i++) {
+                    $('#fc' + i).html("Camera " + (i + 1) + ": " + frame_counts[i]);
                 }
                 var frames = msg.frames;
-                for(i = 0; i < frames.length; i++){
-                    let id = '#f'+i;
+                for (i = 0; i < frames.length; i++) {
+                    let id = '#f' + i;
                     $(id).attr('src', frames[i]);
                 }
             });
