@@ -33,6 +33,11 @@ def home():
         return "Dude...Implement Basic Auth!"
 
     if request.method == "GET":
+        return render_template("login.html")
+
+@app.route("/login", methods=["POST"])
+def login():
+    if request.method == "POST":
         return render_template("index.html")
 
 
