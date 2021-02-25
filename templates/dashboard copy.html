@@ -11,7 +11,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 
     <style>
         body {
@@ -172,9 +172,9 @@
             <div class="col p-4">
                 <section class="cams">
                     <div class="container mx-auto mb-5 p-5" style="background-color: #06345E; border-radius: 2rem;">
-                        <div class="row text-center text-light">
+                        <div class="row text-center">
                             <div class="col mb-5">
-                                <div class="display-4 " id="totalcount"></div>
+                                <div class="display-3 " id="totalcount"></div>
                             </div>
                         </div>
                     </div>
@@ -183,13 +183,13 @@
 
                         {% for i in range(num_cams) %} {% if i%2 != 0 %}
                         <div class="row mb-3 ">
-                            <div class="col-lg-4 offset-lg-1 display-4 text-light" id="fc{{i}}"></div>
+                            <div class="col-lg-4 offset-lg-1 display-4 " id="fc{{i}}"></div>
                             <img class="col-lg-4 offset-lg-2 p-3 " id="f{{i}}" alt="cam_{{i + 1}}" src="" style="height: 300px ">
                         </div>
                         {% else %}
                         <div class="row mb-3 ">
                             <img class="col-lg-4 offset-lg-1 p-3 " id="f{{i}}" alt="cam_{{i + 1}}" src="" style="height: 300px ">
-                            <div class="col-lg-4 offset-lg-2 display-4 text-light" id="fc{{i}}"></div>
+                            <div class="col-lg-4 offset-lg-2 display-4 " id="fc{{i}}"></div>
                         </div>
                         {% endif %} {% endfor %}
                     </div>
@@ -220,20 +220,20 @@
                 $('.row-offcanvas').toggleClass('active');
                 $('.collapse').toggleClass('in').toggleClass('hidden-xs').toggleClass('visible-xs');
             });
-            var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
-
-            socket.on('newdata', function(msg) {
-                $('#totalcount').html('Total Count: ' + msg.total_count);
-                var frame_counts = msg.frame_counts;
-                for (i = 0; i < frame_counts.length; i++) {
-                    $('#fc' + i).html("Camera " + (i + 1) + ": " + frame_counts[i]);
-                }
-                var frames = msg.frames;
-                for (i = 0; i < frames.length; i++) {
-                    let id = '#f' + i;
-                    $(id).attr('src', frames[i]);
-                }
-            });
+            //var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
+            //
+            //socket.on('newdata', function(msg) {
+            //    $('#totalcount').html('Total Count: ' + msg.total_count);
+            //    var frame_counts = msg.frame_counts;
+            //    for (i = 0; i < frame_counts.length; i++) {
+            //        $('#fc' + i).html("Camera " + (i + 1) + ": " + frame_counts[i]);
+            //    }
+            //    var frames = msg.frames;
+            //    for (i = 0; i < frames.length; i++) {
+            //        let id = '#f' + i;
+            //        $(id).attr('src', frames[i]);
+            //    }
+            //});
         });
     </script>
 </body>

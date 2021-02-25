@@ -33,12 +33,12 @@ def home():
         return "Dude...Implement Basic Auth!"
 
     if request.method == "GET":
-        return render_template("login.html")
+        return render_template("index.html")
 
 @app.route("/login", methods=["POST"])
 def login():
     if request.method == "POST":
-        return render_template("index.html")
+        return render_template("get_num_cam_info.html")
 
 
 @app.route("/info/1", methods=["GET", "POST"])
