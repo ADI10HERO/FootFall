@@ -35,10 +35,18 @@ def home():
     if request.method == "GET":
         return render_template("index.html")
 
+
 @app.route("/login", methods=["POST"])
 def login():
     if request.method == "POST":
         return render_template("get_num_cam_info.html")
+
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    if request.method == "POST":
+        print("User logged out")
+        return render_template("index.html")
 
 
 @app.route("/info/1", methods=["GET", "POST"])
@@ -110,6 +118,8 @@ def test_connect():
 
 @socketio.on('disconnect', namespace='/test')
 def test_disconnect():
+    global thread
+    thread_stop_event.set()
     print('Client disconnected')
 
 
