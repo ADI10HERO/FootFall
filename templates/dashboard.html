@@ -46,6 +46,10 @@
             overflow-x: hidden;
         }
         
+        .active-bg {
+            background-color: #0b5599 !important;
+        }
+        
         img {
             border-radius: 2rem;
         }
@@ -64,7 +68,6 @@
 
     <section class="intro">
 
-        <!-- Bootstrap NavBar -->
         <nav class="navbar navbar-expand-md navbar-dark">
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -88,10 +91,8 @@
                 </ul>
             </div>
         </nav>
-        <!-- NavBar END -->
-        <!-- Bootstrap row -->
+
         <div class="row" id="body-row">
-            <!-- Sidebar -->
             <div id="sidebar-container" class="sidebar-expanded d-none d-md-block bg-blue">
                 <!-- d-* hiddens the Sidebar in smaller devices. Its itens can be kept on the Navbar 'Menu' -->
                 <!-- Bootstrap List Group -->
@@ -111,16 +112,16 @@
                     </a>
                     <!-- Submenu content -->
                     <div id='submenu1' class="collapse sidebar-submenu">
-                        <a href="#" class="list-group-item list-group-item-action bg-blue text-white">
+                        <a href="#cams" class="list-group-item list-group-item-action bg-blue my-item text-white">
                             <span class="menu-collapsed">Camera Feed</span>
                         </a>
-                        <a href="#" class="list-group-item list-group-item-action bg-blue text-white">
+                        <a href="#analytics" class="list-group-item list-group-item-action bg-blue my-item text-white">
                             <span class="menu-collapsed">Analysis</span>
                         </a>
-                        <a href="#" class="list-group-item list-group-item-action bg-blue text-white">
+                        <a href="#" class="list-group-item list-group-item-action bg-blue my-item text-white">
                             <span class="menu-collapsed">Reports</span>
                         </a>
-                        <a href="/info/1#get_started" class="list-group-item list-group-item-action bg-blue text-white">
+                        <a href="/info/1" class="list-group-item list-group-item-action bg-blue my-item text-white">
                             <span class="menu-collapsed">Reconfigure</span>
                         </a>
                     </div>
@@ -133,10 +134,10 @@
                     </a>
                     <!-- Submenu content -->
                     <div id='submenu2' class="collapse sidebar-submenu">
-                        <a href="#" class="list-group-item list-group-item-action bg-blue text-white">
+                        <a href="#" class="list-group-item list-group-item-action bg-blue my-item text-white">
                             <span class="menu-collapsed">Settings</span>
                         </a>
-                        <a href="#" class="list-group-item list-group-item-action bg-blue text-white">
+                        <a href="#" class="list-group-item list-group-item-action bg-blue my-item text-white">
                             <span class="menu-collapsed">Change Password</span>
                         </a>
                     </div>
@@ -146,7 +147,7 @@
                     </li>
                     <!-- /END Separator -->
 
-                    <a href="#" class="bg-green list-group-item list-group-item-action">
+                    <a href="#" class="bg-green list-group-item list-group-item-action my-item">
                         <div class="d-flex w-100 justify-content-start align-items-center">
                             <span class="fa fa-question fa-fw mr-3"></span>
                             <span class="menu-collapsed">Help</span>
@@ -167,43 +168,49 @@
                 </ul>
                 <!-- List Group END-->
             </div>
-            <!-- sidebar-container END -->
-            <!-- MAIN -->
+
             <div class="col p-4">
-                <section class="cams">
-                    <div class="container mx-auto mb-5 p-5" style="background-color: #06345E; border-radius: 2rem;">
+
+                <section id="cams" class="tab-content">
+                    <div class="container mx-auto mb-5 p-4" style="background-color:rgb(6, 52, 94); border-radius: 2rem;">
                         <div class="row text-center text-light">
-                            <div class="col mb-5">
+                            <div class="col">
                                 <div class="display-4 " id="totalcount"></div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="container mx-auto mb-5 p-5" style="background-color: #06345E; border-radius: 2rem;">
-
-                        {% for i in range(num_cams) %} {% if i%2 != 0 %}
-                        <div class="row mb-3 ">
-                            <div class="col-lg-4 offset-lg-1 display-4 text-light" id="fc{{i}}"></div>
-                            <img class="col-lg-4 offset-lg-2 p-3 " id="f{{i}}" alt="cam_{{i + 1}}" src="" style="height: 300px ">
+                    <div class="container mx-auto mb-5 p-3">
+                        <div class="row">
+                            {% for i in range(num_cams) %}
+                            <div class="col-lg-4 offset-lg-1 mx-auto mb-3">
+                                <div class="card" style="width: 18rem; border: none;">
+                                    <img src="" class="card-img-top" id="f{{i}}" alt="cam_{{i + 1}}" style="border-radius: 0% !important;">
+                                    <div class="card-body mt-3" style="background-color: rgb(6, 52, 94); border-radius: 2rem;">
+                                        <h3 class="card-title text-light text-center display-6 mx-auto" id="fc{{i}}">
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
                         </div>
-                        {% else %}
-                        <div class="row mb-3 ">
-                            <img class="col-lg-4 offset-lg-1 p-3 " id="f{{i}}" alt="cam_{{i + 1}}" src="" style="height: 300px ">
-                            <div class="col-lg-4 offset-lg-2 display-4 text-light" id="fc{{i}}"></div>
-                        </div>
-                        {% endif %} {% endfor %}
                     </div>
+                </section>
+
+                <section id="analytics" class="tab-content">
+
+                    <h1 class="display-1 my-5 mx-5 ">
+                        COMING SOON...
+                    </h1>
 
                 </section>
             </div>
-            <!-- Main Col END -->
         </div>
-        <!-- body-row END -->
 
     </section>
 
 
-    <section id="footer">
+    <section id="footer ">
         <footer class="bg-light text-center text-lg-start ">
             <div class="text-center p-3 " style="background-color:#06345E; color: white; ">
                 © 2021 FootFall
@@ -212,7 +219,7 @@
     </section>
 
 
-    <script src="../static/dashboard.js"></script>
+    <script src="../static/dashboard.js "></script>
     <script>
         $(document).ready(function() {
             $('[data-toggle=offcanvas]').click(function(e) {
@@ -235,7 +242,54 @@
                 }
             });
         });
+
+        //// Hide submenus
+        //$('#body-row .collapse').collapse('hide');
+        //
+        //// Collapse/Expand icon
+        //$('#collapse-icon').addClass('fa-angle-double-left');
+        //
+        //// Collapse click
+        //$('[data-toggle=sidebar-colapse]').click(function() {
+        //    SidebarCollapse();
+        //});
+        //
+        //function SidebarCollapse() {
+        //    $('.menu-collapsed').toggleClass('d-none');
+        //    $('.sidebar-submenu').toggleClass('d-none');
+        //    $('.submenu-icon').toggleClass('d-none');
+        //    $('#sidebar-container').toggleClass('sidebar-expanded sidebar-collapsed');
+        //
+        //    // Treating d-flex/d-none on separators with title
+        //    var SeparatorTitle = $('.sidebar-separator-title');
+        //    if (SeparatorTitle.hasClass('d-flex')) {
+        //        SeparatorTitle.removeClass('d-flex');
+        //    } else {
+        //        SeparatorTitle.addClass('d-flex');
+        //    }
+        //
+        //    // Collapse/Expand icon
+        //    $('#collapse-icon').toggleClass('fa-angle-double-left fa-angle-double-right');
+        //}
+        //
+        //$('.my-item:first').addClass('active-bg');
+        //$('.my-item:first').removeClass('bg-blue');
+        //$('.tab-content:not(:first)').hide();
+        //$('.my-item').click(function(event) {
+        //    event.preventDefault();
+        //    var content = $(this).attr('href');
+        //    $(this).addClass('active-bg');
+        //    $(this).removeClass('bg-blue');
+        //
+        //    $(this).siblings().removeClass('active-bg');
+        //    $(this).siblings().addClass('bg-blue');
+        //
+        //    $(content).show();
+        //    $(content).siblings('.tab-content').hide();
+        //});
     </script>
 </body>
+
+</html>
 
 </html>

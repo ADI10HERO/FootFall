@@ -43,6 +43,10 @@
             bottom: 0%;
             overflow-x: hidden;
         }
+        
+        .bg-green {
+            background-color: #00B9BA;
+        }
     </style>
 </head>
 
@@ -75,48 +79,49 @@
             </div>
         </nav> -->
         <div class="container">
-            <div class="row mx-auto">
-                <div class="col-lg-4 offset-lg-3">
-                    <img src="../static/logo-white-no-bg.png" height="270" alt=" ">
+            <div class="row">
+                <div class="col-lg-4 offset-lg-2">
+                    <img src="../static/logo-white-no-bg.png" alt=" ">
                 </div>
             </div>
 
         </div>
 
     </section>
-    <section id="get_started ">
-        <div class="container mb-5">
-            <div class="card text-center text-light p-5 " style="background-color:rgba(6, 52, 94, 1); border-radius: 3rem ">
-                <div class="display-4">Get Started</div>
-                <div class="card-body p-5 " style="border: #06345E; ">
-                    <form action="/info/1" method="post">
-                        <div class="row justify-content-center ">
-                            <div class="col-lg-6 ">
-                                <label class="display-6 " for="num_cams">Enter Number of Cameras</label>
-                                <input type="number" class="form-control " name="num_cams" id="num_cams">
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row justify-content-center ">
-                            <div class="col-lg-6 ">
-                                <label class="display-6 text-muted " for="ques">Are these cameras connected to this machine?</label>
-                                <select class="form-control" name="ques" id="ques">
+    <section id="get_started">
+        <div class="container mb-5 p-5" style="background-color:rgba(6, 52, 94, 1); border-radius: 3rem ">
+
+            <form action="/info/1" method="post">
+                <div class="row justify-content-center ">
+                    <div class="col-lg-6 mx-auto">
+                        <label class="display-6 text-light" for="num_cams">Enter Number of Cameras</label>
+                        <input type="number" class="form-control " name="num_cams" id="num_cams">
+                    </div>
+                </div>
+                <br>
+                <div class="row justify-content-center ">
+                    <div class="col-lg-6 ">
+                        <label class="display-6 text-muted " for="ques">Are these cameras connected to this machine?</label>
+                        <select class="form-control" name="ques" id="ques">
                       <option value="yes">Yes</option>
                       <option value="no" selected>No</option>
                     </select>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row justify-content-center ">
-                            <div class="col-lg-3 col-lg-offset-4 ">
-                                <button class="btn btn-outline-light btn-lg m-2 rounded-pill " type="submit ">
+                    </div>
+                </div>
+                <br>
+                <div class="row justify-content-center ">
+                    <div class="mx-auto">
+                        <button class="btn btn-outline-light btn-lg m-2 rounded-pill " type="submit ">
                                     <div class="display-6 ">Submit</div>
                                 </button>
-                            </div>
-                        </div>
-                    </form>
+                    </div>
                 </div>
+            </form>
+            <br>
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-green" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 50%"></div>
             </div>
+            <br>
         </div>
 
     </section>

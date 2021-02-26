@@ -62,7 +62,7 @@ def get_num_cams():
         return render_template("get_cam_info.html", num_cams=num_cams)
 
     if request.method == "GET":
-        return render_template("index.html")
+        return render_template("get_num_cam_info.html")
 
 
 @app.route("/info/2", methods=["POST"])
