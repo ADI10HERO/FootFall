@@ -5,11 +5,14 @@ import time
 
 from threading import Thread
 
-from detection import detect
-# from reidentification import reid
+from detection import detect, DetectorAPI
 from utils.misc import get_box, read_py_config, preprocess_image
 from utils.video import MulticamCapture
+from pprint import pprint
 
+MODEL_PATH = "detector/frozen_inference_graph.pb"
+
+ids = {}
 
 class FramesThreadBody:
     def __init__(self, capture, max_queue_length=2):
@@ -40,6 +43,8 @@ def get_video_writer(output):
 
 def main(input_urls, prob_threshold=0.6, output=None):
 
+    global ids
+    odapi = DetectorAPI(path_to_ckpt=MODEL_PATH)
     capture = MulticamCapture(input_urls)
     thread_body = FramesThreadBody(capture, max_queue_length=len(capture.captures) * 2)
     frames_thread = Thread(target=thread_body)
@@ -58,11 +63,9 @@ def main(input_urls, prob_threshold=0.6, output=None):
             continue
 
         for i,frame in enumerate(frames):
-            # Person detection model
             frame = cv.resize(frame, (480, 360))
-            frame, frame_count, detections = detect(frame)
-            # TODO: Manequinn removal call here    
-            # TODO: Re-id call here
+            frame, frame_count, cur_ids, ids = detect(frame, odapi, ids)
+            # TODO: Manequinn removal call here
 
             ret, jpeg = cv.imencode('.jpg', frame)
             frames[i] = [jpeg, frame_count]

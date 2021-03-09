@@ -1,15 +1,17 @@
 import numpy as np
 import tensorflow as tf
 import cv2
-import time
+import os
 
-from utils.misc import pre_reid_process
+from tracking import track
+from utils.reidentification import Reid
 
 
 MODEL_PATH = "detector/frozen_inference_graph.pb"
 
 class DetectorAPI:
     def __init__(self, path_to_ckpt):
+        self.reid = Reid()
         self.path_to_ckpt = path_to_ckpt
 
         self.detection_graph = tf.Graph()
@@ -37,11 +39,9 @@ class DetectorAPI:
         # Expand dimensions since the trained_model expects images to have shape: [1, None, None, 3]
         image_np_expanded = np.expand_dims(image, axis=0)
         # Actual detection.
-        start_time = time.time()
         (boxes, scores, classes, num) = self.sess.run(
             [self.detection_boxes, self.detection_scores, self.detection_classes, self.num_detections],
             feed_dict={self.image_tensor: image_np_expanded})
-        end_time = time.time()
 
         im_height, im_width,_ = image.shape
         boxes_list = [None for i in range(boxes.shape[1])]
@@ -57,10 +57,20 @@ class DetectorAPI:
         self.sess.close()
         self.default_graph.close()
 
+    def find(self, img):
+        """
+        img: Cv2 image object
+            Cropped image (withen bounding box)
+        """
+        files = os.listdir('detections/')
+        for f in files:
+            old_img = cv2.imread('detections/'+ f)
+            if self.reid.compare(img, old_img):
+                return int(f.split('.')[0])
+        return -1
 
-odapi = DetectorAPI(path_to_ckpt=MODEL_PATH)
 
-def detect(img, threshold=0.63):
+def detect(img, odapi, ids):
     """
     Parameters
     -----------
@@ -70,25 +80,13 @@ def detect(img, threshold=0.63):
     img: cv2 image object
         Single image frame
     """
-
-    img = cv2.resize(img, (640, 480))
     boxes, scores, classes, num = odapi.processFrame(img)
-    # print("\n\n ====NUM===== ", num, len(boxes))
+    cur_ids, ids = track(boxes, scores, classes, img, odapi, ids)
+    count_ppl = len(cur_ids)
 
-    count_ppl = 0
-    detections = []
-    for i in range(len(boxes)):
-
-        if classes[i] != 1 or not (scores[i] > threshold):
-            # class 1 represents humans
-            continue
-
-        count_ppl += 1
-        box = boxes[i]
-        detections.append(pre_reid_process(box, img))
+    for id, val in cur_ids.items():
+        box, flag = val
         cv2.rectangle(img,(box[1],box[0]),(box[3],box[2]),(255,0,0),2)
+        img = cv2.putText(img, str(id), (box[1],box[0]), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
 
-    img = cv2.putText(img, 'Count :'+str(count_ppl), (30, 30), cv2.FONT_HERSHEY_SIMPLEX,  
-            1, (0, 0, 255), 2, cv2.LINE_AA)
-
-    return img, count_ppl, detections
+    return img, count_ppl, cur_ids, ids

@@ -72,6 +72,9 @@ def pre_reid_process(box, frame):
     frame = cv2.resize(frame, (9, 9))
     return frame
 
+def save_img(cropped, id):
+    cv2.imwrite('detections/' + str(id) + '.jpg', cropped)
+    return
 
 COLOR_PALETTE = [[0, 113, 188],
                  [216, 82, 24],

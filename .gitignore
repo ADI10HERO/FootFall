@@ -5,3 +5,8 @@ __pycache__
 resources/*
 !resources/.gitkeep
 detector/saved_model
+logs/*
+!logs/.gitkeep
+detections/*
+!detections/.gitkeep
+.vscode
