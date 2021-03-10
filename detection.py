@@ -6,6 +6,7 @@ import os
 from tracking import track
 from utils.reidentification import Reid
 
+reid_threshold = 0.55
 
 MODEL_PATH = "detector/frozen_inference_graph.pb"
 
@@ -63,11 +64,15 @@ class DetectorAPI:
             Cropped image (withen bounding box)
         """
         files = os.listdir('detections/')
+        max_conf, final_id = 0, -1
         for f in files:
             old_img = cv2.imread('detections/'+ f)
-            if self.reid.compare(img, old_img):
-                return int(f.split('.')[0])
-        return -1
+            new_conf = self.reid.compare(img, old_img)
+            if new_conf > max_conf and new_conf > reid_threshold:
+                max_conf = new_conf
+                final_id = int(f.split('.')[0])
+
+        return final_id
 
 
 def detect(img, odapi, ids):

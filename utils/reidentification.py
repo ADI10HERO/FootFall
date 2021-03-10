@@ -201,7 +201,8 @@ class Reid:
 
             feed_dict = {self.images: test_images, self.is_train: False}
             prediction = sess.run(self.inference, feed_dict=feed_dict)
-            return bool(not np.argmax(prediction[0]))
+            # bool(not np.argmax(prediction[0]))
+            return prediction[0][0]
 
 
 if __name__ == '__main__':
