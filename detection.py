@@ -63,6 +63,7 @@ class DetectorAPI:
             Cropped image (withen bounding box)
         """
         files = os.listdir('detections/')
+        files.remove('.gitkeep')
         for f in files:
             old_img = cv2.imread('detections/'+ f)
             if self.reid.compare(img, old_img):
