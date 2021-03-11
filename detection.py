@@ -64,7 +64,9 @@ class DetectorAPI:
             Cropped image (withen bounding box)
         """
         files = os.listdir('detections/')
-        max_conf, final_id = 0, -1
+        files.remove('.gitkeep')
+
+        max_conf, final_id = 0, -1        
         for f in files:
             old_img = cv2.imread('detections/'+ f)
             new_conf = self.reid.compare(img, old_img)
@@ -87,11 +89,5 @@ def detect(img, odapi, ids):
     """
     boxes, scores, classes, num = odapi.processFrame(img)
     cur_ids, ids = track(boxes, scores, classes, img, odapi, ids)
-    count_ppl = len(cur_ids)
 
-    for id, val in cur_ids.items():
-        box, flag = val
-        cv2.rectangle(img,(box[1],box[0]),(box[3],box[2]),(255,0,0),2)
-        img = cv2.putText(img, str(id), (box[1],box[0]), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
-
-    return img, count_ppl, cur_ids, ids
+    return img, len(cur_ids), cur_ids, ids

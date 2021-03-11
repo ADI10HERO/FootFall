@@ -102,7 +102,7 @@ def getupdatedinfo():
         }
 
         socketio.emit('newdata', data, namespace='/test')
-        time.sleep(1)
+        # time.sleep(1)
         # socketio.sleep(2)
 
 
