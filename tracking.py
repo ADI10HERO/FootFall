@@ -49,7 +49,7 @@ def track(boxes, scores, classes, img, odapi, ids):
                 final_id = odapi.find(cropped_img)
                 if final_id == -1:
                     final_id = len(ids) + 1
-                    ids[final_id] = [[], 1]
+                    ids[final_id] = [[], -1]
 
             ids[final_id][0].append(box)
             if len(ids[final_id][0]) == min_frames + 1:
