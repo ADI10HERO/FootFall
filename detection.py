@@ -6,7 +6,7 @@ import os
 from tracking import track
 from utils.reidentification import Reid
 
-reid_threshold = 0.75
+reid_threshold = 0.5
 
 MODEL_PATH = "detector/frozen_inference_graph.pb"
 
