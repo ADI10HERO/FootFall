@@ -4,7 +4,7 @@ from tracking import iou
 from pprint import pprint
 
 min_frames = 5
-mannq_threshold = 0.80
+mannq_threshold = 0.85
 mann_to_human = 0.75
 
 def remove_mannequin(ids):

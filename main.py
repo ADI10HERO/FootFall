@@ -7,7 +7,7 @@ from threading import Thread
 
 from detection import detect, DetectorAPI
 from mannequin import remove_mannequin
-from utils.misc import get_box, read_py_config, preprocess_image
+from utils.misc import get_box, read_py_config, preprocess_image, clear_detections
 from utils.video import MulticamCapture
 from pprint import pprint
 
@@ -45,13 +45,15 @@ def get_video_writer(output):
 def main(input_urls, prob_threshold=0.6, output=None):
 
     global ids
+
     odapi = DetectorAPI(path_to_ckpt=MODEL_PATH)
     capture = MulticamCapture(input_urls)
     thread_body = FramesThreadBody(capture, max_queue_length=len(capture.captures) * 2)
     frames_thread = Thread(target=thread_body)
     frames_thread.start()
 
-    output_video = get_video_writer(output)
+    clear_detections()
+    # output_video = get_video_writer(output)
     while cv.waitKey(1) != 27 and thread_body.process:
         # start = time.time()
         try:
@@ -79,10 +81,10 @@ def main(input_urls, prob_threshold=0.6, output=None):
             ret, jpeg = cv.imencode('.jpg', frame)
             frames[i] = [jpeg, frame_count]
 
-        if output_video:
-            # TODO: Concat frames and write output
-            # vis = concat(frames)
-            output_video.write(cv.resize(vis, video_output_size))
+        # if output_video:
+        #     # TODO: Concat frames and write output
+        #     # vis = concat(frames)
+        #     output_video.write(cv.resize(vis, video_output_size))
 
         yield frames
 
