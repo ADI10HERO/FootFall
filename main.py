@@ -14,6 +14,7 @@ from pprint import pprint
 MODEL_PATH = "detector/frozen_inference_graph.pb"
 
 ids = {}
+count = 0
 
 class FramesThreadBody:
     def __init__(self, capture, max_queue_length=2):
@@ -52,6 +53,7 @@ def main(input_urls, prob_threshold=0.6, output=None):
     frames_thread = Thread(target=thread_body)
     frames_thread.start()
 
+    itr = 0
     clear_detections()
     # output_video = get_video_writer(output)
     while cv.waitKey(1) != 27 and thread_body.process:
@@ -64,29 +66,35 @@ def main(input_urls, prob_threshold=0.6, output=None):
         if frames is None:
             continue
 
-        for i,frame in enumerate(frames):
-            frame = cv.resize(frame, (480, 360))
-            frame, frame_count, cur_ids, ids = detect(frame, odapi, ids)
-            ids = remove_mannequin(ids)
+        to_yield = []
+        if itr % 5 == 0:
+            for i,frame in enumerate(frames):
+                frame = cv.resize(frame, (480, 360))
 
-            for id, box in cur_ids.items():
-                flag = ids[id][1]
-                if flag == 1 or flag == -1:
-                    cv.rectangle(frame,(box[1],box[0]),(box[3],box[2]),(255,0,0),2)
-                    frame = cv.putText(frame, str(id), (box[1],box[0]), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv.LINE_AA)
-                else:
-                    cv.rectangle(frame,(box[1],box[0]),(box[3],box[2]),(0,0,255),2)
-                    frame_count -= 1
+                frame, frame_count, cur_ids, ids = detect(frame, odapi, ids)
+                ids = remove_mannequin(ids)
 
-            ret, jpeg = cv.imencode('.jpg', frame)
-            frames[i] = [jpeg, frame_count]
+                for id, box in cur_ids.items():
+                    flag = ids[id][1]
+                    if flag == 1 or flag == -1:
+                        cv.rectangle(frame,(box[1],box[0]),(box[3],box[2]),(255,0,0),2)
+                        frame = cv.putText(frame, str(id), (box[1],box[0]), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv.LINE_AA)
+                    else:
+                        cv.rectangle(frame,(box[1],box[0]),(box[3],box[2]),(0,0,255),2)
+                        frame_count -= 1
+        
+                count = frame_count
+                ret, jpeg = cv.imencode('.jpg', frame)
+                frames[i] = [jpeg, count]
+
+            to_yield = frames[:]
 
         # if output_video:
         #     # TODO: Concat frames and write output
         #     # vis = concat(frames)
         #     output_video.write(cv.resize(vis, video_output_size))
 
-        yield frames
+        yield to_yield
 
     thread_body.process = False
     frames_thread.join()
