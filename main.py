@@ -13,8 +13,6 @@ from pprint import pprint
 
 MODEL_PATH = "detector/frozen_inference_graph.pb"
 
-ids = {}
-
 class FramesThreadBody:
     def __init__(self, capture, max_queue_length=2):
         self.process = True
@@ -44,7 +42,7 @@ def get_video_writer(output):
 
 def main(input_urls, prob_threshold=0.6, output=None):
 
-    global ids
+    ids = {}
     odapi = DetectorAPI(path_to_ckpt=MODEL_PATH)
     capture = MulticamCapture(input_urls)
     thread_body = FramesThreadBody(capture, max_queue_length=len(capture.captures) * 2)
@@ -69,7 +67,7 @@ def main(input_urls, prob_threshold=0.6, output=None):
             ids = remove_mannequin(ids)
 
             for id, box in cur_ids.items():
-                flag = ids[id][1]
+                flag = cur_ids[id][1]
                 if flag:
                     cv.rectangle(frame,(box[1],box[0]),(box[3],box[2]),(255,0,0),2)
                     frame = cv.putText(frame, str(id), (box[1],box[0]), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv.LINE_AA)
