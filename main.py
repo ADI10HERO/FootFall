@@ -71,7 +71,7 @@ def main(input_urls, prob_threshold=0.6, output=None):
             ids = remove_mannequin(ids)
 
             for id, box in cur_ids.items():
-                flag = cur_ids[id][1]
+                flag = ids[id][1]
                 if flag == 1 or flag == -1:
                     cv.rectangle(frame,(box[1],box[0]),(box[3],box[2]),(255,0,0),2)
                     frame = cv.putText(frame, str(id), (box[1],box[0]), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv.LINE_AA)
