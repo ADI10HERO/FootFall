@@ -19,8 +19,10 @@ def remove_mannequin(ids):
             if flag == -1:
                 if  _iou > mannq_threshold:
                     ids[id][1] = 0
+                    flag = 0
                 else:
                     ids[id][1] = 1
+                    flag = 1
             if flag == 0 and _iou < mann_to_human:
                 ids[id][1] = 1
     return ids

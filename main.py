@@ -66,35 +66,35 @@ def main(input_urls, prob_threshold=0.6, output=None):
         if frames is None:
             continue
 
-        to_yield = []
-        if itr % 5 == 0:
-            for i,frame in enumerate(frames):
-                frame = cv.resize(frame, (480, 360))
+        # to_yield = []
+        # if itr % 5 == 0:
+        for i,frame in enumerate(frames):
+            frame = cv.resize(frame, (480, 360))
 
-                frame, frame_count, cur_ids, ids = detect(frame, odapi, ids)
-                ids = remove_mannequin(ids)
+            frame, frame_count, cur_ids, ids = detect(frame, odapi, ids)
+            ids = remove_mannequin(ids)
 
-                for id, box in cur_ids.items():
-                    flag = ids[id][1]
-                    if flag == 1 or flag == -1:
-                        cv.rectangle(frame,(box[1],box[0]),(box[3],box[2]),(255,0,0),2)
-                        frame = cv.putText(frame, str(id), (box[1],box[0]), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv.LINE_AA)
-                    else:
-                        cv.rectangle(frame,(box[1],box[0]),(box[3],box[2]),(0,0,255),2)
-                        frame_count -= 1
-        
-                count = frame_count
-                ret, jpeg = cv.imencode('.jpg', frame)
-                frames[i] = [jpeg, count]
+            for id, box in cur_ids.items():
+                flag = ids[id][1]
+                if flag == 1 or flag == -1:
+                    cv.rectangle(frame,(box[1],box[0]),(box[3],box[2]),(255,0,0),2)
+                    frame = cv.putText(frame, str(id), (box[1],box[0]), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv.LINE_AA)
+                else:
+                    cv.rectangle(frame,(box[1],box[0]),(box[3],box[2]),(0,0,255),2)
+                    frame_count -= 1
+    
+            count = frame_count
+            ret, jpeg = cv.imencode('.jpg', frame)
+            frames[i] = [jpeg, count]
 
-            to_yield = frames[:]
+            # to_yield = frames[:]
 
         # if output_video:
         #     # TODO: Concat frames and write output
         #     # vis = concat(frames)
         #     output_video.write(cv.resize(vis, video_output_size))
 
-        yield to_yield
+        yield frames
 
     thread_body.process = False
     frames_thread.join()
