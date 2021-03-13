@@ -86,7 +86,7 @@
                         <a class="nav-link active" href="/#features">Features</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/#get_started">Get Started</a>
+                        <a class="nav-link active" href="/#login">Get Started</a>
                     </li>
                 </ul>
             </div>
@@ -121,9 +121,9 @@
                         <a href="#" class="list-group-item list-group-item-action bg-blue my-item text-white">
                             <span class="menu-collapsed">Reports</span>
                         </a>
-                        <a href="/info/1" class="list-group-item list-group-item-action bg-blue my-item text-white">
+                        <!--a href="{{ url_for('get_num_cams') }}" class="list-group-item list-group-item-action bg-blue my-item text-white">
                             <span class="menu-collapsed">Reconfigure</span>
-                        </a>
+                        </a-->
                     </div>
                     <a href="#submenu2" data-toggle="collapse" aria-expanded="false" class="bg-green list-group-item list-group-item-action flex-column align-items-start">
                         <div class="d-flex w-100 justify-content-start align-items-center">
@@ -147,10 +147,16 @@
                     </li>
                     <!-- /END Separator -->
 
-                    <a href="#" class="bg-green list-group-item list-group-item-action my-item">
+                    <a href="#" class="bg-green list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-start align-items-center">
                             <span class="fa fa-question fa-fw mr-3"></span>
                             <span class="menu-collapsed">Help</span>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('get_num_cams')}}" class="bg-green list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-start align-items-center">
+                            <span class="fa fa-repeat fa-fw mr-3"></span>
+                            <span class="menu-collapsed">Reconfigure</span>
                         </div>
                     </a>
                     <a href="/" ping="/logout" class="bg-green list-group-item list-group-item-action">
@@ -183,7 +189,7 @@
                     <div class="container mx-auto mb-5 p-3">
                         <div class="row">
                             {% for i in range(num_cams) %}
-                            <div class="col-lg-4 offset-lg-1 mx-auto mb-3">
+                            <div class="col-lg-5 offset-lg-1 mx-auto mb-3">
                                 <div class="card" style="width: 18rem; border: none;">
                                     <img src="" class="card-img-top" id="f{{i}}" alt="cam_{{i + 1}}" style="border-radius: 0% !important;">
                                     <div class="card-body mt-3" style="background-color: rgb(6, 52, 94); border-radius: 2rem;">
