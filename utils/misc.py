@@ -1,5 +1,6 @@
 import base64
 import cv2
+import os
 import os.path as osp
 import sys
 from importlib import import_module
@@ -75,6 +76,9 @@ def pre_reid_process(box, frame):
 def save_img(cropped, id):
     cv2.imwrite('detections/' + str(id) + '.jpg', cropped)
     return
+
+def clear_detections():
+    os.system("rm detections/*.jpg")
 
 COLOR_PALETTE = [[0, 113, 188],
                  [216, 82, 24],

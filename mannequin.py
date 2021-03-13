@@ -4,8 +4,8 @@ from tracking import iou
 from pprint import pprint
 
 min_frames = 5
-mannq_threshold = 0.95
-
+mannq_threshold = 0.85
+mann_to_human = 0.75
 
 def remove_mannequin(ids):
     """
@@ -14,11 +14,17 @@ def remove_mannequin(ids):
     """
     for id, val in ids.items():
         boxes, flag = val
-        if flag == 1 and len(boxes) == min_frames:
+        if len(boxes) == min_frames:
             _iou = iou(boxes[0], boxes[-1])
-            print(id, _iou)
-            if _iou > mannq_threshold:
-                ids[id][1] = 0
+            if flag == -1:
+                if  _iou > mannq_threshold:
+                    ids[id][1] = 0
+                    flag = 0
+                else:
+                    ids[id][1] = 1
+                    flag = 1
+            if flag == 0 and _iou < mann_to_human:
+                ids[id][1] = 1
     return ids
 
 if __name__ == "__main__":
