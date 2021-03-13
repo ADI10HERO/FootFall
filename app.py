@@ -8,7 +8,6 @@ from flask import (
 )
 from flask_socketio import SocketIO, emit
 import time
-from main import main
 from threading import Thread, Event
 from utils.misc import encode
 
@@ -20,10 +19,7 @@ app.config['DEBUG'] = True
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode=None, logger=False, engineio_logger=False)
 
 
-input = None
-frames = []
-frame_counts = []
-total_count = 0
+input = []
 num_cams = 0
 
 
@@ -84,7 +80,9 @@ thread_stop_event = Event()
 
 def getupdatedinfo():
 
-    global total_count, frame_counts, frames, input
+    global frames, input
+    import main
+    from main import main
 
     callback = main(input)
     print("Starting stream")
