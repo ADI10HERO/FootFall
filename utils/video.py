@@ -36,7 +36,7 @@ class MulticamCapture:
         frames = []
         for capture in self.captures:
             has_frame, frame = capture.read()
-            frame = cv.resize(frame, (640, 480))
+            frame = cv.resize(frame, (480, 360))
             if has_frame:
                 frames.append(frame)
 
