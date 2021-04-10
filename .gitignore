@@ -5,6 +5,7 @@ __pycache__
 resources/*
 !resources/.gitkeep
 detector/saved_model
+detector/yolo/*.weights
 logs/*
 !logs/.gitkeep
 detections/*
