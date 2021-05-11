@@ -6,4 +6,4 @@ pybktree
 flask-socketio==4.3.2
 python-engineio==3.14.2
 python-socketio==4.6.1
-tensorflow==1.15.0
+tensorflow==2.4.0
